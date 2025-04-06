@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Number Guessing Game</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 10px;
+    }
+    #feedback {
+      margin-top: 20px;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Guess the 4-Digit Number</h1>
+  <p>All digits must be unique!</p>
+
+  <input type="text" id="userInput" maxlength="4" placeholder="Enter 4-digit number" />
+  <button onclick="checkGuess()">Submit</button>
+
+  <div id="feedback"></div>
+
+  <script>
+    // Generate a unique 4-digit number
+    function generateNumber() {
+      let digits = [...Array(10).keys()];
+      digits = digits.sort(() => 0.5 - Math.random());
+      if (digits[0] === 0) [digits[0], digits[1]] = [digits[1], digits[0]];
+      return digits.slice(0, 4).join('');
+    }
+
+    const generatedNumber = generateNumber();
+    console.log("Generated:", generatedNumber); // For debugging
+
+    function checkGuess() {
+      const input = document.getElementById("userInput").value;
+      const feedback = document.getElementById("feedback");
+
+      // Validate input
+      if (input.length !== 4 || isNaN(input) || new Set(input).size !== 4) {
+        feedback.innerHTML = "❌ Please enter 4 unique digits.";
+        return;
+      }
+
+      if (input === generatedNumber) {
+        feedback.innerHTML = `🎉 Correct! You guessed the number: <strong>${generatedNumber}</strong>`;
+        return;
+      }
+
+      // Compare numbers
+      let samePos = 0;
+      let diffPos = 0;
+
+      for (let i = 0; i < 4; i++) {
+        if (input[i] === generatedNumber[i]) {
+          samePos++;
+        } else if (generatedNumber.includes(input[i])) {
+          diffPos++;
+        }
+      }
+
+      feedback.innerHTML = `
+        ✅ Digits in correct position: <strong>${samePos}</strong><br>
+        🔁 Correct digits in wrong position: <strong>${diffPos}</strong><br>
+        🔄 Try again!
+      `;
+    }
+  </script>
+
+</body>
+</html>
